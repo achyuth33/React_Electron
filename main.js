@@ -3,7 +3,19 @@ const { app, BrowserWindow } = require('electron');
 let win;
 
 function createWindow() {
-  win = new BrowserWindow({ width: 800, height: 600 });
+const win = new BrowserWindow({
+  transparent: true,
+  frame: false,
+  titleBarStyle: 'hidden',
+  titleBarOverlay: {
+    color: '#2f3241',
+    symbolColor: '#74b1be'
+  },
+  webPreferences: {
+    nodeIntegration: true
+  }
+})
+win.show()
 
   if (process.env.DEBUG) {
     win.loadURL(`http://localhost:3000`);
