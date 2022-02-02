@@ -14,7 +14,7 @@ app.on('ready', () => {
 
 const createTray = () => {
   tray = new Tray(path.join('bitcoin.png'))
-  tray.on('click', function (event) {
+  tray.on('click', function () {
     toggleWindow()
   });
 }
@@ -45,7 +45,7 @@ const createWindow = () => {
       backgroundThrottling: false
     }
   })
-  window.loadURL(`file://${path.join(__dirname, 'index.html')}`)
+  window.loadURL(`file://${path.join(__dirname, /build/index.html`)}`)
 
   // Hide the window when it loses focus
   window.on('blur', () => {
