@@ -1,70 +1,36 @@
-const {app, BrowserWindow, ipcMain, Tray} = require('electron');
-const path = require('path');
+const { app, BrowserWindow } = require('electron');
 
-let tray = undefined
-let window = undefined
+let win;
 
-// Don't show the app in the doc
-app.dock.hide()
+function createWindow() {
+  win = new BrowserWindow({ width: 800, height: 600 });
 
-app.on('ready', () => {
-  createTray()
-  createWindow()
-})
+  if (process.env.DEBUG) {
+    win.loadURL(`http://localhost:3000`);
+  } else {
+    win.loadURL(`file://${__dirname}/build/index.html`);
+  }
 
-const createTray = () => {
-  tray = new Tray(path.join('bitcoin.png'))
-  tray.on('click', function () {
-    toggleWindow()
+
+  //win.loadFile('index.html');
+  //win.loadURL(`file://${__dirname}/build/index.html`);
+  //win.loadURL(`http://localhost:3000`);
+
+  win.on('closed', () => {
+    win = null;
   });
 }
 
-const getWindowPosition = () => {
-  const windowBounds = window.getBounds();
-  const trayBounds = tray.getBounds();
+app.on('ready', createWindow);
 
-  // Center window horizontally below the tray icon
-  const x = Math.round(trayBounds.x + (trayBounds.width / 2) - (windowBounds.width / 2));
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
 
-  // Position window 4 pixels vertically below the tray icon
-  const y = Math.round(trayBounds.y + trayBounds.height + 4);
-
-  return {x: x, y: y};
-}
-
-const createWindow = () => {
-  window = new BrowserWindow({
-    width: 320,
-    height: 450,
-    show: false,
-    frame: false,
-    fullscreenable: false,
-    resizable: false,
-    transparent: false,
-    webPreferences: {
-      backgroundThrottling: false
-    }
-  })
-  window.loadURL(`file://${path.join(__dirname, /build/index.html`)}`)
-
-  // Hide the window when it loses focus
-  window.on('blur', () => {
-    if (!window.webContents.isDevToolsOpened()) {
-      window.hide()
-    }
-  })
-}
-
-const toggleWindow = () => {
-  window.isVisible() ? window.hide() : showWindow();
-}
-
-const showWindow = () => {
-  const position = getWindowPosition();
-  window.setPosition(position.x, position.y, false);
-  window.show();
-}
-
-ipcMain.on('show-window', () => {
-  showWindow()
-})
+app.on('activate', () => {
+  if (win === null) {
+    createWindow();
+  }
+});
