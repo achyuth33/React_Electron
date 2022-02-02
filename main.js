@@ -11,6 +11,7 @@ function createWindow() {
     win.loadURL(`file://${__dirname}/build/index.html`);
   }
 
+  //
 
   //win.loadFile('index.html');
   //win.loadURL(`file://${__dirname}/build/index.html`);
