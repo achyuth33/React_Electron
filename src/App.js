@@ -1,12 +1,23 @@
-
 import React from 'react';
 import './App.css';
 import { Navbar, Button, Alignment, Icon } from '@blueprintjs/core';
 
 function App() {
-  const onSnipClick = () => {
-    console.log('todo: making screenshot');
-  };
+
+const onSnipClick = async () => {
+    // In the main process.
+const { desktopCapturer } = require('electron')
+//const { ipcRenderer } = require('electron')
+
+desktopCapturer.getSources({ types: ['window', 'screen'] }).then(async sources => {
+  for (const source of sources) {
+    if (source.name === 'Electron') {
+      mainWindow.webContents.send('SET_SOURCE', source.id)
+      return
+    }
+  }
+);
+}
 
   return (
     <div className="App">
@@ -14,8 +25,7 @@ function App() {
         <Navbar.Group align={Alignment.LEFT}>
           <Navbar.Heading>Electron Snip</Navbar.Heading>
           <Navbar.Divider />
-          <Button className="bp3-minimal" icon="settings" 
-              text="Settings" />
+          <Button className="bp3-minimal" icon="settings" text="Settings" />
           <Button className="bp3-minimal" icon="help" text="About" />
           <Button
             className="bp3-minimal"
